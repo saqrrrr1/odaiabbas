@@ -6,7 +6,6 @@
 <title>odai abbas</title>
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 <style>
-  /* unchanged base except targeted header/sharpness */
   body {
     margin: 0;
     font-family: 'Press Start 2P', monospace;
@@ -14,43 +13,37 @@
     color: #ff0;
     text-align: center;
     overflow-x: hidden;
-    height: 100vh;
+    min-height: 100vh;
     position: relative;
   }
 
-  /* Canvas for particles */
   #bgCanvas { position: fixed; top:0; left:0; width:100%; height:100%; z-index:-1; }
 
-  /* Header */
+  /* Header now scrolls with content (no more fixed) */
   header {
     display: none;
-    position: fixed;
-    top: 10px;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
+    margin-top: 10px;
     flex-direction: column;
     align-items: center;
     z-index: 100;
     opacity: 0;
     transition: opacity 1s ease;
+    position: relative; /* not fixed anymore */
   }
   header img {
     width: 80px;
     filter: drop-shadow(0 0 6px #ff0);
   }
-  /* SHARPER / THINNER "odai abbas" - reduced glow + slight horizontal squeeze */
   header h1 {
     margin: 5px 0 0;
     font-size: 1.2rem;
     color: #ff0;
-    text-shadow: 0 0 2px rgba(255,255,0,0.85); /* much smaller blur */
+    text-shadow: 0 0 2px rgba(255,255,0,0.85);
     display: inline-block;
     transform-origin: center;
-    transform: scaleX(0.94); /* subtle thinning */
+    transform: scaleX(0.94);
   }
 
-  /* Lock Screen */
   #lockScreen {
     position: fixed;
     inset: 0;
@@ -69,7 +62,6 @@
     margin-bottom: 25px;
     filter: drop-shadow(0 0 6px #ff0) drop-shadow(0 0 12px #ff0);
   }
-  /* SHARPER lock-screen title too */
   #lockScreen h1 {
     font-size: 2rem;
     margin-bottom: 20px;
@@ -78,6 +70,12 @@
     display:inline-block;
     transform-origin:center;
     transform: scaleX(0.94);
+  }
+
+  .lock-inputs {
+    display: flex;
+    align-items: center;
+    gap: 10px;
   }
 
   input, button {
@@ -92,10 +90,9 @@
   }
   button:hover { background: #ff0; color: #0d0d0d; cursor: pointer; }
 
-  /* Main Content */
   #mainContent {
     display: none;
-    padding: 160px 20px 50px;
+    padding: 40px 20px 50px;
     opacity: 0;
     transform: translateY(40px);
     transition: opacity 1s ease, transform 1s ease;
@@ -111,7 +108,6 @@
   }
   .buttons button:hover { transform: scale(1.1); }
 
-  /* Notes Wall */
   .note-wall {
     margin-top: 20px;
     background: #111;
@@ -122,7 +118,10 @@
     border-radius:10px;
     box-shadow: 0 0 10px rgba(255,255,0,0.18);
   }
-  .note-wall h3 { color: #ff00d6; text-shadow: 0 0 5px #ff00d6; }
+  .note-wall h3 { 
+    color: #ff00d6; 
+    text-shadow: 0 0 1px #ff00d6; /* way less glow */
+  }
   .note-wall input, .note-wall textarea {
     width: calc(100% - 24px);
     margin: 5px 0; padding:8px; border-radius:5px;
@@ -157,7 +156,7 @@
     border-radius:4px;
     cursor:pointer;
     font-size:12px;
-    display:none; /* shown only in admin mode */
+    display:none;
   }
 
   @keyframes popIn {
@@ -170,35 +169,30 @@
 
 <canvas id="bgCanvas"></canvas>
 
-<!-- Header (Falcon + Name) -->
 <header id="siteHeader">
-  <img src="https://i.postimg.cc/vZJTy02Q/20250910-0534-Falcon-Polo-Style-simple-compose-01k4rqfmkdftdacx2pbgpsqzpz-removebg-preview.png" alt="Falcon">
+  <img src="https://i.postimg.cc/QCx85ZGh/Whats-App-Image-2025-09-10-at-06-25-15-dd017815-removebg-preview.png" alt="Logo">
   <h1>odai abbas</h1>
 </header>
 
-<!-- Lock Screen -->
 <div id="lockScreen">
-  <img src="https://i.postimg.cc/vZJTy02Q/20250910-0534-Falcon-Polo-Style-simple-compose-01k4rqfmkdftdacx2pbgpsqzpz-removebg-preview.png" alt="Odai Abbas Logo">
+  <img src="https://i.postimg.cc/QCx85ZGh/Whats-App-Image-2025-09-10-at-06-25-15-dd017815-removebg-preview.png" alt="Odai Abbas Logo">
   <h1>odai abbas</h1>
-  <input type="password" id="password" placeholder="Enter Password">
+  <div class="lock-inputs">
+    <input type="password" id="password" placeholder="Enter Password">
+    <button onclick="showHint()">❔</button>
+  </div>
   <button onclick="unlock()">Unlock</button>
   <p id="error" style="color:red; display:none;">Wrong password!</p>
 </div>
 
-<!-- Main Content -->
 <div id="mainContent">
   <div class="section">
     <h2>Welcome!</h2>
   </div>
 
   <div class="section buttons">
-    <!-- Button 1: Facebook -->
     <button onclick="window.open('https://www.facebook.com/odai.abbas.237239', '_blank')">Facebook</button>
-
-    <!-- Button 2: Email -->
     <button onclick="window.location.href='mailto:odaiabbas222@gmail.com'">Email</button>
-
-    <!-- Button 3: Spicy popup -->
     <button onclick="spicyPopup()">My spicy pictures 🌶️</button>
   </div>
 
@@ -212,54 +206,45 @@
 </div>
 
 <script>
-  /* === admin mode flag === */
   let adminMode = false;
 
-  /* ===== Unlock (normal and admin passwords) ===== */
   function unlock() {
     const input = document.getElementById('password').value;
     if (input === 'falcon' || input === 'falconadmin') {
-      // set adminMode appropriately
       adminMode = (input === 'falconadmin');
-      // fade out lock screen
       const lock = document.getElementById('lockScreen');
       lock.classList.add('fadeOut');
       setTimeout(() => {
         lock.style.display = 'none';
-        // show main and header (same behavior you had)
         const main = document.getElementById('mainContent');
         main.style.display = 'block';
         main.classList.add('show');
         const hdr = document.getElementById('siteHeader');
         hdr.style.display = 'flex';
         hdr.style.opacity = '1';
-        // re-render notes so delete buttons reflect adminMode
         renderNotes();
       }, 500);
     } else {
-      // small visible error and hide it shortly
       const err = document.getElementById('error');
       err.style.display = 'block';
       setTimeout(()=> err.style.display='none', 1600);
     }
   }
 
-  /* ===== LocalStorage notes helpers ===== */
-  function loadNotes(){
-    try {
-      return JSON.parse(localStorage.getItem('odai_notes') || '[]');
-    } catch(e){ return []; }
-  }
-  function saveNotes(notes){
-    localStorage.setItem('odai_notes', JSON.stringify(notes));
+  function showHint(){
+    alert("Password hint: [placeholder hint text here]");
   }
 
-  /* ===== Render notes (shows delete button if adminMode) ===== */
+  function loadNotes(){
+    try { return JSON.parse(localStorage.getItem('odai_notes') || '[]'); }
+    catch(e){ return []; }
+  }
+  function saveNotes(notes){ localStorage.setItem('odai_notes', JSON.stringify(notes)); }
+
   function renderNotes(){
     const notesEl = document.getElementById('notes');
     notesEl.innerHTML = '';
     const notes = loadNotes();
-    // newest first
     for (let i = notes.length - 1; i >= 0; i--){
       const n = notes[i];
       const div = document.createElement('div');
@@ -272,7 +257,6 @@
       div.appendChild(author);
       div.appendChild(content);
 
-      // delete button (only visible in admin mode)
       const del = document.createElement('button');
       del.className = 'delete-btn';
       del.textContent = '❌';
@@ -306,12 +290,10 @@
     renderNotes();
   }
 
-  /* spicy popup */
   function spicyPopup(){
     alert("Do you really think I'm into that shit? Shame on you creep.");
   }
 
-  /* ===== background particles (left unchanged) ===== */
   const canvas = document.getElementById('bgCanvas');
   const ctx = canvas.getContext('2d');
   let w = canvas.width = window.innerWidth;
@@ -355,7 +337,6 @@
   }
   animate();
 
-  /* render existing notes on load (no admin active by default) */
   renderNotes();
 </script>
 </body>
