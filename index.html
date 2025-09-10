@@ -5,142 +5,117 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Odai Abbas</title>
   <style>
+    /* Global Styles */
     body {
       margin: 0;
-      height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      flex-direction: column;
       font-family: 'Press Start 2P', cursive;
-      background: black;
-      overflow: hidden;
+      background-color: black;
       color: #0ff;
+      text-align: center;
+      overflow: hidden;
     }
 
-    /* Retro neon grid background */
-    body::before {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: 
-        linear-gradient(to top, rgba(0,0,0,0.9) 70%, transparent),
-        repeating-linear-gradient(#0ff 1px, transparent 2px),
-        repeating-linear-gradient(90deg, #0ff 1px, transparent 2px);
-      background-size: 100% 100%, 100% 40px, 40px 100%;
-      animation: gridMove 10s linear infinite;
-      z-index: -2;
-    }
-
-    @keyframes gridMove {
-      from { background-position: 0 0, 0 0, 0 0; }
-      to { background-position: 0 0, 0 100%, 100% 0; }
-    }
-
-    /* Neon pixel logo */
+    /* Logo Styles */
     .logo {
-      font-size: 5em;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      color: #0ff;
-      text-shadow: 0 0 10px #0ff, 0 0 20px #0ff, 0 0 40px #0ff;
+      font-size: 5rem;
+      color: #ff0;
+      text-shadow: 0 0 10px #ff0, 0 0 20px #ff0, 0 0 30px #ff0;
     }
 
-    /* Neon O (ring) */
-    .logo .o {
-      width: 100px;
-      height: 100px;
-      border: 6px solid #ff0;
-      border-radius: 50%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      box-shadow: 0 0 15px #ff0, 0 0 30px #ff0;
-      position: relative;
-      overflow: hidden;
-    }
-
-    /* 9-ball inside O */
-    .nine-ball {
+    .logo .ball {
+      display: inline-block;
       width: 60px;
       height: 60px;
       border-radius: 50%;
-      background: radial-gradient(circle at 30% 30%, white 20%, yellow 60%, black 100%);
-      border: 3px solid black;
-      animation: spin 6s linear infinite;
-    }
-
-    @keyframes spin {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
-    }
-
-    /* Password box */
-    .password-box {
-      margin-top: 20px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    input {
-      padding: 10px;
-      font-size: 1.2em;
-      border: none;
-      outline: none;
-      border-radius: 8px;
-      text-align: center;
-      background: #111;
-      color: #0ff;
-      box-shadow: 0 0 10px #0ff, 0 0 20px #0ff;
-      font-family: 'Press Start 2P', cursive;
-    }
-
-    button {
-      margin-top: 15px;
-      padding: 10px 20px;
-      font-size: 1em;
-      border: none;
-      cursor: pointer;
-      border-radius: 8px;
-      background: #0ff;
+      background-color: #ff0;
       color: black;
+      line-height: 60px;
+      font-size: 2rem;
+      animation: rotateBall 2s linear infinite;
+    }
+
+    @keyframes rotateBall {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Input and Button Styles */
+    input, button {
       font-family: 'Press Start 2P', cursive;
-      box-shadow: 0 0 15px #0ff, 0 0 30px #0ff;
-      transition: transform 0.2s;
+      font-size: 1.5rem;
+      padding: 10px;
+      margin: 10px;
+      border: 2px solid #0ff;
+      background-color: black;
+      color: #0ff;
+      border-radius: 5px;
     }
 
     button:hover {
-      transform: scale(1.1);
+      background-color: #0ff;
+      color: black;
+      cursor: pointer;
+    }
+
+    /* Note Wall Styles */
+    .note-wall {
+      margin-top: 20px;
+      background-color: #111;
+      padding: 20px;
+      border: 2px solid #0ff;
+      max-width: 600px;
+      margin: auto;
+    }
+
+    .note {
+      background-color: #222;
+      border: 1px solid #0ff;
+      padding: 10px;
+      margin: 10px 0;
+      text-align: left;
     }
   </style>
 </head>
 <body>
 
+  <!-- Logo Section -->
   <div class="logo">
-    <div class="o">
-      <div class="nine-ball"></div>
-    </div>
-    dai
+    <span class="ball">9</span>dai
   </div>
 
-  <div class="password-box">
+  <!-- Password Input Section -->
+  <div>
     <input type="password" id="password" placeholder="Enter Password">
     <button onclick="checkPassword()">Unlock</button>
+  </div>
+
+  <!-- Note Wall Section -->
+  <div class="note-wall">
+    <h2>Visitor Notes</h2>
+    <textarea id="noteInput" placeholder="Leave a note..."></textarea>
+    <button onclick="addNote()">Post Note</button>
+    <div id="notes"></div>
   </div>
 
   <script>
     function checkPassword() {
       const input = document.getElementById('password').value;
-      if (input === "falcon") {
-        alert("Access Granted! 🎱");
-        // later you can redirect to socials page
+      if (input === 'falcon') {
+        alert('Access Granted!');
+        // Redirect to main content or unlock additional features
       } else {
-        alert("Wrong Password!");
+        alert('Wrong Password!');
+      }
+    }
+
+    function addNote() {
+      const noteText = document.getElementById('noteInput').value;
+      if (noteText.trim() !== '') {
+        const noteDiv = document.createElement('div');
+        noteDiv.className = 'note';
+        noteDiv.textContent = noteText;
+        document.getElementById('notes').prepend(noteDiv);
+        document.getElementById('noteInput').value = '';
       }
     }
   </script>
