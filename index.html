@@ -1,527 +1,263 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Odai Abbas — Mini Site</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Odai Abbas</title>
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 <style>
-  :root{
-    --bg:#0d0d0d;
-    --neon-cyan:#00ffd1;
-    --neon-pink:#ff00d6;
-    --neon-purple:#9b5cff;
-    --card:#111;
-    --muted:#222;
+  :root {
+    --bg: #0d0d0d;
+    --neon-cyan: #00ffd1;
+    --neon-pink: #ff00d6;
+    --neon-purple: #9b5cff;
+    --card: #111;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: 'Press Start 2P', monospace;
+    background: var(--bg);
+    color: var(--neon-cyan);
+    overflow-x: hidden;
   }
 
-  /* Reset + base */
-  *{box-sizing:border-box}
-  html,body{height:100%}
-  body{
-    margin:0;
-    font-family:'Press Start 2P', monospace;
-    background:var(--bg);
-    color:var(--neon-cyan);
-    overflow-x:hidden;
-    -webkit-font-smoothing:antialiased;
-    -moz-osx-font-smoothing:grayscale;
+  /* Header */
+  header {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    z-index: 50;
+    opacity: 0;
+    transition: opacity 0.6s ease;
+  }
+  header img {
+    width: 60px;
+    filter: drop-shadow(0 0 10px var(--neon-cyan));
+  }
+  header .site-name {
+    font-size: 12px;
+    color: var(--neon-cyan);
+    text-shadow: 0 0 8px var(--neon-cyan);
   }
 
-  /* Background canvases stacking */
-  #bgCanvas, #ballCanvas {
-    position:fixed;
-    top:0; left:0;
-    width:100%; height:100%;
-    z-index:-3;
-    pointer-events:none;
+  /* Lock Screen */
+  #lockScreen {
+    position: fixed;
+    inset: 0;
+    background: var(--bg);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    z-index: 20;
+    transition: opacity 0.6s ease;
+  }
+  #lockScreen img {
+    width: 200px;
+    filter: drop-shadow(0 0 20px var(--neon-cyan));
+  }
+  #lockScreen h1 {
+    margin: 0;
+    font-size: 22px;
+    color: var(--neon-cyan);
+    text-shadow: 0 0 10px var(--neon-pink);
+  }
+  input[type="password"] {
+    background: var(--card);
+    color: var(--neon-cyan);
+    border: 2px solid rgba(0,255,209,0.3);
+    padding: 12px;
+    width: 260px;
+    border-radius: 6px;
+    text-align: center;
+  }
+  button {
+    background: linear-gradient(90deg,var(--neon-pink),var(--neon-purple));
+    border: none;
+    padding: 12px 18px;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    color: #0d0d0d;
+    font-family: inherit;
+  }
+  #lockError {
+    color: #ff6b6b;
+    font-size: 12px;
+    opacity: 0;
+    transition: opacity 0.3s;
   }
 
-  /* subtle gradient glow layer */
-  .glow-layer{
-    position:fixed; inset:0; z-index:-2;
-    background:
-      radial-gradient(800px 400px at 10% 20%, rgba(155,92,255,0.06), transparent 10%),
-      radial-gradient(700px 350px at 90% 80%, rgba(0,255,209,0.04), transparent 10%);
-    mix-blend-mode:screen;
-    pointer-events:none;
+  /* Main Content */
+  main {
+    opacity: 0;
+    transition: opacity 0.8s ease;
+    padding: 100px 20px 50px;
+    text-align: center;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  .socials {
+    margin: 20px 0;
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .socials button {
+    background: transparent;
+    border: 2px solid var(--neon-cyan);
+    color: var(--neon-cyan);
+    min-width: 150px;
+    transition: 0.3s;
+  }
+  .socials button:hover {
+    color: var(--neon-pink);
+    border-color: var(--neon-pink);
+    box-shadow: 0 0 10px var(--neon-pink);
   }
 
-  /* Header (keeps the falcon logo after unlock) */
-  header{
-    position:fixed;
-    top:18px;
-    left:18px;
-    display:flex;
-    align-items:center;
-    gap:12px;
-    z-index:30;
-    transition:transform .6s ease, opacity .6s ease;
+  /* Notes Wall */
+  .notes-wall {
+    margin-top: 30px;
   }
-  header img{ width:64px; height:auto; filter:drop-shadow(0 0 10px var(--neon-cyan)); border-radius:8px; }
-  header .site-name{ color:var(--neon-cyan); font-size:13px; text-shadow:0 0 8px var(--neon-cyan); }
-
-  /* Lock screen (full-screen center) */
-  #lockScreen{
-    position:fixed; inset:0;
-    display:flex; flex-direction:column; align-items:center; justify-content:center;
-    gap:18px;
-    background:linear-gradient(180deg, rgba(0,0,0,0.55), rgba(0,0,0,0.75));
-    z-index:20;
-    transition:opacity .6s ease, transform .6s ease;
+  .notes-wall h2 {
+    color: var(--neon-pink);
+    text-shadow: 0 0 8px var(--neon-pink);
+    margin-bottom: 15px;
   }
-
-  #lockScreen .logo-lg{
-    width:220px;
-    max-width:60%;
-    border-radius:10px;
-    filter:drop-shadow(0 0 20px var(--neon-cyan)) drop-shadow(0 0 30px var(--neon-pink));
-    transform-origin:center;
-    animation:logoPulse 3s ease-in-out infinite;
+  #notes {
+    display: grid;
+    grid-template-columns: repeat(auto-fill,minmax(200px,1fr));
+    gap: 15px;
   }
-  @keyframes logoPulse{
-    0%,100%{ transform:scale(1) }
-    50%{ transform:scale(1.03) }
+  .note {
+    background: var(--card);
+    border: 1px solid rgba(0,255,209,0.2);
+    padding: 12px;
+    border-radius: 8px;
+    text-align: left;
+    font-size: 12px;
+    color: #e6fff9;
+    box-shadow: 0 0 10px rgba(0,255,209,0.1);
   }
-
-  #lockScreen h1{
-    margin:0;
-    font-size:22px;
-    color:var(--neon-cyan);
-    text-shadow:0 0 10px var(--neon-cyan), 0 0 18px var(--neon-pink);
+  .note:hover {
+    transform: scale(1.02);
   }
-
-  .lock-controls{
-    display:flex; gap:10px; align-items:center; flex-wrap:wrap; justify-content:center;
+  .composer {
+    margin: 15px 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
   }
-
-  input[type="password"]{
-    background:var(--card);
-    color:var(--neon-cyan);
-    border:2px solid rgba(0,255,209,0.18);
-    padding:12px 14px;
-    width:280px;
-    max-width:80%;
-    border-radius:8px;
-    box-shadow:0 0 10px rgba(0,255,209,0.05);
-    outline:none;
-    transition:box-shadow .15s ease, transform .15s ease;
-    font-family:'Press Start 2P', monospace;
-    letter-spacing:1px;
-  }
-  input[type="password"]:focus{ box-shadow:0 0 20px rgba(0,255,209,0.12); transform:translateY(-2px) }
-
-  button.btn{
-    background:linear-gradient(90deg,var(--neon-pink),var(--neon-purple));
-    border:none;
-    padding:12px 16px;
-    color:#0d0d0d;
-    border-radius:8px;
-    cursor:pointer;
-    font-weight:700;
-    box-shadow:0 6px 18px rgba(255,0,214,0.08);
-    transition:transform .12s ease, box-shadow .12s ease;
-  }
-  button.btn:hover{ transform:translateY(-4px); box-shadow:0 10px 28px rgba(155,92,255,0.12) }
-
-  #lockError{ color:#ff6b6b; font-size:12px; opacity:0; transition:opacity .2s; }
-
-  /* Main content (hidden until unlocked) */
-  main{
-    min-height:100vh;
-    padding:110px 24px 80px;
-    opacity:0; transform:translateY(14px);
-    transition:opacity .6s ease, transform .6s ease;
-    z-index:10;
-    position:relative;
-  }
-
-  .hero{
-    max-width:980px; margin:0 auto; display:flex; flex-direction:column; align-items:center; gap:16px;
-  }
-  .hero h2{ margin:0; font-size:20px; color:var(--neon-cyan); text-shadow:0 0 8px var(--neon-cyan); }
-  .hero p{ margin:0; color: rgba(0,255,209,0.75); max-width:720px; text-align:center; font-size:11px; line-height:1.6 }
-
-  /* Social buttons (neon outlines) */
-  .socials{ margin-top:28px; display:flex; gap:12px; justify-content:center; flex-wrap:wrap }
-  .social-btn{
-    min-width:170px;
-    background:transparent;
-    color:var(--neon-cyan);
-    border:2px solid rgba(0,255,209,0.12);
-    padding:12px 14px;
-    border-radius:10px;
-    cursor:pointer;
-    transition:transform .14s, box-shadow .14s;
-    text-shadow:0 0 6px rgba(0,255,209,0.06);
-  }
-  .social-btn:hover{
-    transform:translateY(-6px);
-    box-shadow:0 14px 30px rgba(0,255,209,0.06);
-    border-color: rgba(155,92,255,0.28);
-    color:var(--neon-pink);
-  }
-
-  /* Fancy notes wall */
-  .notes-wrap{
-    margin:36px auto 0;
-    width:100%;
-    max-width:980px;
-    display:grid;
-    grid-template-columns: repeat(auto-fill,minmax(220px,1fr));
-    gap:18px;
-    align-items:start;
-  }
-
-  .note-card{
-    background:linear-gradient(180deg,var(--card), #0b0b0b);
-    border-radius:10px;
-    padding:12px;
-    min-height:110px;
-    color:#e6fff9;
-    box-shadow:
-      0 6px 22px rgba(0,0,0,0.5),
-      0 0 14px rgba(0,255,209,0.04),
-      inset 0 -6px 18px rgba(0,0,0,0.25);
-    transform-origin:center;
-    transition: transform .25s ease, box-shadow .25s ease;
-    border:1px solid rgba(0,255,209,0.06);
-    position:relative;
-    overflow:hidden;
-  }
-
-  .note-card .note-head{
-    display:flex; gap:8px; align-items:center; margin-bottom:8px;
-  }
-  .note-card .handle{
-    width:36px; height:20px; border-radius:4px;
-    background:linear-gradient(90deg,var(--neon-cyan),var(--neon-pink));
-    box-shadow:0 0 8px rgba(0,255,209,0.12);
-  }
-  .note-card p{ margin:0; font-size:12px; line-height:1.5; color:#dffdf9; }
-
-  .note-card:hover{ transform:translateY(-6px) rotate(-1deg); box-shadow:0 18px 50px rgba(0,0,0,0.6) }
-
-  /* new note composer */
-  .composer{
-    display:flex; gap:10px; align-items:flex-start; justify-content:center; flex-wrap:wrap;
-    margin-top:18px;
-  }
-  .composer textarea{
-    resize:none; min-height:70px; width:360px; max-width:86%;
-    background:var(--muted); color:var(--neon-cyan);
-    border-radius:8px; border:1px solid rgba(0,255,209,0.06);
-    padding:10px; font-family:'Press Start 2P', monospace; font-size:11px;
-  }
-
-  /* small screens */
-  @media (max-width:600px){
-    header{left:12px; top:12px}
-    #lockScreen h1{font-size:16px}
-    .hero h2{font-size:16px}
-    .social-btn{min-width:140px}
-    .notes-wrap{grid-template-columns:1fr}
+  .composer textarea {
+    width: 300px;
+    height: 60px;
+    background: #222;
+    color: var(--neon-cyan);
+    border: 1px solid rgba(0,255,209,0.3);
+    border-radius: 6px;
+    padding: 8px;
+    font-family: inherit;
+    font-size: 11px;
   }
 </style>
 </head>
 <body>
 
-<!-- background canvases -->
-<canvas id="bgCanvas"></canvas>    <!-- subtle starfield/lines -->
-<canvas id="ballCanvas"></canvas>  <!-- neon pool balls drifting -->
-<div class="glow-layer"></div>
-
-<!-- persistent top header (logo + name) -->
-<header aria-hidden="true">
-  <img id="topLogo" src="https://i.postimg.cc/SsF5Q4qZ/20250910-0344-Neon-Pixelated-Falcon-simple-compose-01k4rh7mdsf91bqbmrj61n6z5b-removebg-preview.png" alt="falcon logo">
+<header>
+  <img src="https://i.postimg.cc/SsF5Q4qZ/20250910-0344-Neon-Pixelated-Falcon-simple-compose-01k4rh7mdsf91bqbmrj61n6z5b-removebg-preview.png" alt="Falcon Logo">
   <div class="site-name">Odai Abbas</div>
 </header>
 
-<!-- LOCK SCREEN -->
-<section id="lockScreen" aria-label="lock screen">
-  <img class="logo-lg" src="https://i.postimg.cc/SsF5Q4qZ/20250910-0344-Neon-Pixelated-Falcon-simple-compose-01k4rh7mdsf91bqbmrj61n6z5b-removebg-preview.png" alt="Odai logo large">
+<section id="lockScreen">
+  <img src="https://i.postimg.cc/SsF5Q4qZ/20250910-0344-Neon-Pixelated-Falcon-simple-compose-01k4rh7mdsf91bqbmrj61n6z5b-removebg-preview.png" alt="Logo">
   <h1>Odai Abbas</h1>
-
-  <div class="lock-controls">
-    <input id="pw" type="password" placeholder="ENTER PASSWORD" autocomplete="off" />
-    <button class="btn" id="unlockBtn">UNLOCK</button>
-  </div>
-  <div id="lockError">Wrong password — try again.</div>
-  <div style="margin-top:14px; font-size:11px; color:rgba(0,255,209,0.2)">password: falcon</div>
+  <input id="pw" type="password" placeholder="Enter password">
+  <button id="unlockBtn">Unlock</button>
+  <div id="lockError">Wrong password!</div>
 </section>
 
-<!-- MAIN CONTENT -->
-<main id="main" aria-hidden="true">
-  <section class="hero" aria-label="hero">
-    <h2>Welcome to Odai's mini site</h2>
-    <p>Retro-neon micro-portfolio — small, focused and interactive. Unlock to reveal socials and a visitor note wall.</p>
+<main id="main">
+  <h2>Welcome to Odai's World</h2>
+  <p>Unlock to explore socials and leave a note.</p>
 
-    <div class="socials" aria-label="socials">
-      <button class="social-btn">Twitter</button>
-      <button class="social-btn">Instagram</button>
-      <button class="social-btn">YouTube</button>
-      <button class="social-btn">Discord</button>
-    </div>
-  </section>
+  <div class="socials">
+    <button>Twitter</button>
+    <button>Instagram</button>
+    <button>YouTube</button>
+    <button>Discord</button>
+  </div>
 
-  <section style="margin-top:28px; text-align:center;">
-    <h3 style="color:var(--neon-pink); text-shadow:0 0 8px var(--neon-pink); margin:0">Visitor Note Wall</h3>
+  <div class="notes-wall">
+    <h2>Visitor Notes</h2>
     <div class="composer">
       <textarea id="noteText" placeholder="Write your note..."></textarea>
-      <div style="display:flex; flex-direction:column; gap:10px; align-items:center;">
-        <button class="btn" id="postNoteBtn">POST NOTE</button>
-        <button style="background:transparent; color:var(--neon-cyan); border:1px solid rgba(0,255,209,0.06); padding:8px 10px; border-radius:6px; cursor:pointer;" id="clearBtn">CLEAR ALL</button>
-      </div>
+      <button id="postNoteBtn">Post</button>
     </div>
-
-    <div class="notes-wrap" id="notesWrap" aria-live="polite" aria-atomic="true" style="margin-top:22px"></div>
-  </section>
+    <div id="notes"></div>
+  </div>
 </main>
 
 <script>
-/* ---------------------------
-   PASSWORD + TRANSITIONING
-   --------------------------- */
-const unlockBtn = document.getElementById('unlockBtn');
 const pwInput = document.getElementById('pw');
+const unlockBtn = document.getElementById('unlockBtn');
 const lockScreen = document.getElementById('lockScreen');
 const main = document.getElementById('main');
+const header = document.querySelector('header');
 const lockError = document.getElementById('lockError');
-const topHeader = document.querySelector('header');
 
-function showError() {
-  lockError.style.opacity = '1';
-  setTimeout(()=> lockError.style.opacity='0', 1600);
-}
-
-function unlockSequence(){
-  // quick check
-  if(pwInput.value.trim() !== 'falcon'){ showError(); return; }
-
-  // keep header/falcon visible but fade lock
-  lockScreen.style.transition = 'opacity .7s ease, transform .7s ease';
-  lockScreen.style.opacity = '0';
-  lockScreen.style.transform = 'translateY(-20px) scale(.98)';
-
-  // show main after short delay for smoothness
-  setTimeout(()=>{
-    lockScreen.style.display = 'none';
+function unlock() {
+  if (pwInput.value.trim() === 'falcon') {
+    lockScreen.style.opacity = '0';
+    setTimeout(()=> lockScreen.style.display='none',600);
     main.style.opacity = '1';
-    main.style.transform = 'translateY(0)';
-    main.setAttribute('aria-hidden','false');
-  }, 600);
-
-  // small theme flourish on header
-  topHeader.style.transform = 'translateY(0)';
+    header.style.opacity = '1';
+  } else {
+    lockError.style.opacity = '1';
+    setTimeout(()=> lockError.style.opacity='0', 1200);
+  }
 }
+unlockBtn.addEventListener('click', unlock);
+pwInput.addEventListener('keydown', e=>{ if(e.key==='Enter') unlock(); });
 
-unlockBtn.addEventListener('click', unlockSequence);
-pwInput.addEventListener('keydown', e => { if(e.key === 'Enter') unlockSequence(); });
-
-/* ---------------------------
-   NOTES (localStorage persistence)
-   --------------------------- */
-const notesWrap = document.getElementById('notesWrap');
-const postNoteBtn = document.getElementById('postNoteBtn');
+// Notes system
+const notesEl = document.getElementById('notes');
 const noteText = document.getElementById('noteText');
-const clearBtn = document.getElementById('clearBtn');
-
-function makeNoteElement(text, id){
-  const card = document.createElement('div');
-  card.className = 'note-card';
-  card.style.transform = `rotate(${(Math.random()-0.5)*4}deg) scale(.98)`;
-  card.style.opacity = '0';
-  card.style.transition = 'opacity .3s ease, transform .45s cubic-bezier(.16,.9,.3,1)';
-  // head + handle
-  const head = document.createElement('div'); head.className='note-head';
-  const handle = document.createElement('div'); handle.className='handle';
-  head.appendChild(handle);
-  // content
-  const p = document.createElement('p'); p.textContent = text;
-  // small footer remove button
-  const rm = document.createElement('button');
-  rm.textContent = 'x';
-  rm.style.position='absolute'; rm.style.top='8px'; rm.style.right='8px';
-  rm.style.background='transparent'; rm.style.color='rgba(255,255,255,0.6)'; rm.style.border='none';
-  rm.style.cursor='pointer'; rm.style.fontFamily='inherit'; rm.style.fontSize='12px';
-  rm.addEventListener('click', ()=> {
-    removeNoteById(id);
-  });
-
-  card.appendChild(head);
-  card.appendChild(p);
-  card.appendChild(rm);
-
-  // pop-in animation
-  requestAnimationFrame(()=> {
-    card.style.opacity = '1';
-    card.style.transform = `rotate(${(Math.random()-0.5)*3}deg) scale(1)`;
-  });
-
-  return card;
-}
+const postNoteBtn = document.getElementById('postNoteBtn');
 
 function loadNotes(){
-  const raw = localStorage.getItem('odai_notes_v1');
-  if(!raw) return [];
-  try{
-    const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed : [];
-  }catch(e){ return []; }
+  return JSON.parse(localStorage.getItem('odai_notes')||'[]');
 }
 function saveNotes(notes){
-  localStorage.setItem('odai_notes_v1', JSON.stringify(notes));
+  localStorage.setItem('odai_notes', JSON.stringify(notes));
 }
 function renderNotes(){
-  notesWrap.innerHTML = '';
-  const notes = loadNotes().slice().reverse();
-  notes.forEach(n=>{
-    const el = makeNoteElement(n.text, n.id);
-    notesWrap.appendChild(el);
+  notesEl.innerHTML='';
+  loadNotes().forEach(n=>{
+    const div=document.createElement('div');
+    div.className='note';
+    div.textContent=n;
+    notesEl.appendChild(div);
   });
 }
 function addNote(){
-  const txt = (noteText.value || '').trim();
+  const txt=noteText.value.trim();
   if(!txt) return;
-  const notes = loadNotes();
-  const newNote = { id:Date.now(), text:txt };
-  notes.push(newNote);
+  const notes=loadNotes();
+  notes.push(txt);
   saveNotes(notes);
   noteText.value='';
   renderNotes();
 }
-function removeNoteById(id){
-  const notes = loadNotes().filter(n=> n.id !== id);
-  saveNotes(notes);
-  renderNotes();
-}
-function clearAllNotes(){
-  if(!confirm('Clear all notes?')) return;
-  localStorage.removeItem('odai_notes_v1');
-  renderNotes();
-}
-
 postNoteBtn.addEventListener('click', addNote);
-clearBtn.addEventListener('click', clearAllNotes);
 renderNotes();
-
-/* ---------------------------
-   BACKGROUND: subtle starfield + scanlines
-   --------------------------- */
-const bgCanvas = document.getElementById('bgCanvas');
-const bgCtx = bgCanvas.getContext('2d');
-function resizeBg(){ bgCanvas.width = innerWidth; bgCanvas.height = innerHeight; }
-resizeBg(); window.addEventListener('resize', resizeBg);
-
-const stars = [];
-for(let i=0;i<140;i++){
-  stars.push({
-    x: Math.random()*innerWidth,
-    y: Math.random()*innerHeight,
-    r: Math.random()*1.6+0.3,
-    vx: (Math.random()-0.5)*0.12
-  });
-}
-function drawBg(){
-  bgCtx.clearRect(0,0,bgCanvas.width,bgCanvas.height);
-  // faint scanline gradient
-  const g = bgCtx.createLinearGradient(0,0,0,bgCanvas.height);
-  g.addColorStop(0, 'rgba(0,0,0,0)');
-  g.addColorStop(0.5, 'rgba(0,0,0,0.05)');
-  g.addColorStop(1, 'rgba(0,0,0,0.12)');
-  bgCtx.fillStyle = g;
-  bgCtx.fillRect(0,0,bgCanvas.width,bgCanvas.height);
-
-  // stars
-  for(let s of stars){
-    s.x += s.vx;
-    if(s.x < 0) s.x = bgCanvas.width;
-    if(s.x > bgCanvas.width) s.x = 0;
-    bgCtx.beginPath();
-    bgCtx.arc(s.x, s.y, s.r, 0, Math.PI*2);
-    bgCtx.fillStyle = 'rgba(0,255,209,0.09)';
-    bgCtx.fill();
-  }
-
-  // subtle grid lines
-  bgCtx.strokeStyle = 'rgba(0,255,209,0.02)';
-  bgCtx.lineWidth = 1;
-  for(let i=0;i<bgCanvas.width;i+=90){
-    bgCtx.beginPath();
-    bgCtx.moveTo(i, bgCanvas.height*0.6);
-    bgCtx.lineTo(i, bgCanvas.height);
-    bgCtx.stroke();
-  }
-}
-setInterval(drawBg, 33);
-
-/* ---------------------------
-   BACKGROUND: neon pool balls drifting (colored blobs)
-   --------------------------- */
-const ballCanvas = document.getElementById('ballCanvas');
-const ballCtx = ballCanvas.getContext('2d');
-function resizeBalls(){ ballCanvas.width = innerWidth; ballCanvas.height = innerHeight; }
-resizeBalls(); window.addEventListener('resize', resizeBalls);
-
-const neons = [
-  { color: 'rgba(0,255,209,0.12)', r:30},
-  { color: 'rgba(255,0,214,0.10)', r:26},
-  { color: 'rgba(155,92,255,0.08)', r:34},
-  { color: 'rgba(0,255,209,0.07)', r:20},
-];
-const balls = [];
-for(let i=0;i<8;i++){
-  balls.push({
-    x: Math.random()*innerWidth,
-    y: Math.random()*innerHeight,
-    vx: (Math.random()-0.5)*0.2,
-    vy: (Math.random()-0.5)*0.2,
-    c: neons[i % neons.length].color,
-    r: neons[i % neons.length].r * (0.7 + Math.random()*0.8)
-  });
-}
-function drawBalls(){
-  ballCtx.clearRect(0,0,ballCanvas.width,ballCanvas.height);
-  for(let b of balls){
-    b.x += b.vx;
-    b.y += b.vy;
-    if(b.x < -100) b.x = ballCanvas.width + 100;
-    if(b.x > ballCanvas.width + 100) b.x = -100;
-    if(b.y < -100) b.y = ballCanvas.height + 100;
-    if(b.y > ballCanvas.height + 100) b.y = -100;
-
-    // soft neon glow
-    const g = ballCtx.createRadialGradient(b.x, b.y, 0, b.x, b.y, b.r*2.2);
-    g.addColorStop(0, b.c);
-    g.addColorStop(0.5, 'rgba(0,0,0,0.0)');
-    ballCtx.fillStyle = g;
-    ballCtx.beginPath();
-    ballCtx.arc(b.x, b.y, b.r*2.6, 0, Math.PI*2);
-    ballCtx.fill();
-
-    // core circle
-    ballCtx.beginPath();
-    ballCtx.arc(b.x, b.y, b.r, 0, Math.PI*2);
-    ballCtx.fillStyle = b.c.replace(/0\.1|0\.12|0\.08|0\.07/,'0.9').replace('rgba(','rgba(').replace('0.9','0.94');
-    ballCtx.fill();
-  }
-  requestAnimationFrame(drawBalls);
-}
-drawBalls();
-
-/* small parallax on mouse to affect balls */
-document.addEventListener('mousemove', e=>{
-  const mx = (e.clientX / window.innerWidth - 0.5) * 0.6;
-  const my = (e.clientY / window.innerHeight - 0.5) * 0.6;
-  for(let i=0;i<balls.length;i++){
-    balls[i].x += mx * 0.3 * (i%2 === 0 ? 1 : -1);
-    balls[i].y += my * 0.3 * (i%2 === 0 ? -1 : 1);
-  }
-});
-
-/* initial focus */
-pwInput.focus();
 </script>
-
 </body>
 </html>
