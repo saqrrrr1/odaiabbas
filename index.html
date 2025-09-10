@@ -3,185 +3,144 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Odai 🎱</title>
+  <title>Odai Abbas</title>
   <style>
     body {
       margin: 0;
-      font-family: 'Press Start 2P', monospace;
-      background: #000;
-      color: #0ff;
-      text-align: center;
-      overflow-x: hidden;
-    }
-
-    /* Neon glow text */
-    .neon {
-      font-size: 3rem;
-      color: #0ff;
-      text-shadow: 0 0 10px #0ff, 0 0 20px #0ff, 0 0 30px #ff00de, 0 0 40px #ff00de;
-    }
-
-    /* Center container */
-    .center {
+      height: 100vh;
       display: flex;
-      flex-direction: column;
       justify-content: center;
       align-items: center;
-      height: 100vh;
-    }
-
-    input, button, textarea {
-      font-family: 'Press Start 2P', monospace;
-      font-size: 1rem;
-      padding: 10px;
-      margin: 10px;
-      border: none;
-      outline: none;
-      border-radius: 5px;
-    }
-
-    input, textarea {
-      background: #111;
+      flex-direction: column;
+      font-family: 'Press Start 2P', cursive;
+      background: black;
+      overflow: hidden;
       color: #0ff;
-      border: 2px solid #0ff;
     }
 
-    button {
-      background: #ff00de;
-      color: #fff;
-      cursor: pointer;
-      transition: 0.3s;
+    /* Retro neon grid background */
+    body::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: 
+        linear-gradient(to top, rgba(0,0,0,0.9) 70%, transparent),
+        repeating-linear-gradient(#0ff 1px, transparent 2px),
+        repeating-linear-gradient(90deg, #0ff 1px, transparent 2px);
+      background-size: 100% 100%, 100% 40px, 40px 100%;
+      animation: gridMove 10s linear infinite;
+      z-index: -2;
     }
 
-    button:hover {
-      background: #0ff;
-      color: #000;
+    @keyframes gridMove {
+      from { background-position: 0 0, 0 0, 0 0; }
+      to { background-position: 0 0, 0 100%, 100% 0; }
     }
 
-    /* Rotating 9-ball */
-    .ball {
-      display: inline-block;
-      width: 50px;
-      height: 50px;
+    /* Neon pixel logo */
+    .logo {
+      font-size: 5em;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #0ff;
+      text-shadow: 0 0 10px #0ff, 0 0 20px #0ff, 0 0 40px #0ff;
+    }
+
+    /* Neon O (ring) */
+    .logo .o {
+      width: 100px;
+      height: 100px;
+      border: 6px solid #ff0;
       border-radius: 50%;
-      background: yellow;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 0 15px #ff0, 0 0 30px #ff0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* 9-ball inside O */
+    .nine-ball {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, white 20%, yellow 60%, black 100%);
       border: 3px solid black;
-      color: black;
-      font-size: 1rem;
-      font-weight: bold;
-      line-height: 45px;
-      text-align: center;
-      animation: spin 5s linear infinite;
-      margin-right: 10px;
+      animation: spin 6s linear infinite;
     }
 
     @keyframes spin {
-      0% { transform: rotate(0deg);}
-      100% { transform: rotate(360deg);}
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
     }
 
-    /* Social buttons */
-    .buttons {
+    /* Password box */
+    .password-box {
       margin-top: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
 
-    .buttons button {
-      display: block;
-      margin: 10px auto;
-      width: 200px;
-    }
-
-    /* Note wall */
-    .note-wall {
-      margin-top: 40px;
-      background: #111;
-      padding: 20px;
-      border: 2px solid #0ff;
-      max-width: 600px;
-      margin-left: auto;
-      margin-right: auto;
-    }
-
-    .note {
-      background: #222;
-      border: 1px solid #0ff;
+    input {
       padding: 10px;
-      margin: 10px 0;
-      text-align: left;
+      font-size: 1.2em;
+      border: none;
+      outline: none;
+      border-radius: 8px;
+      text-align: center;
+      background: #111;
+      color: #0ff;
+      box-shadow: 0 0 10px #0ff, 0 0 20px #0ff;
+      font-family: 'Press Start 2P', cursive;
+    }
+
+    button {
+      margin-top: 15px;
+      padding: 10px 20px;
+      font-size: 1em;
+      border: none;
+      cursor: pointer;
+      border-radius: 8px;
+      background: #0ff;
+      color: black;
+      font-family: 'Press Start 2P', cursive;
+      box-shadow: 0 0 15px #0ff, 0 0 30px #0ff;
+      transition: transform 0.2s;
+    }
+
+    button:hover {
+      transform: scale(1.1);
     }
   </style>
-  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 </head>
 <body>
 
-  <!-- Front Page -->
-  <div class="center" id="front">
-    <h1 class="neon">Enter Your Name</h1>
-    <input type="text" id="username" placeholder="Your name">
-    <button onclick="goToLock()">Proceed</button>
+  <div class="logo">
+    <div class="o">
+      <div class="nine-ball"></div>
+    </div>
+    dai
   </div>
 
-  <!-- Lock Screen -->
-  <div class="center" id="lock" style="display:none;">
-    <h1 class="neon">
-      <span class="ball">9</span> dai
-    </h1>
-    <p>Enter Password:</p>
-    <input type="password" id="password" placeholder="Password">
-    <button onclick="unlock()">Unlock</button>
-    <p id="error" style="color:red; display:none;">Wrong password!</p>
-  </div>
-
-  <!-- Main Page -->
-  <div class="center" id="main" style="display:none; flex-direction:column;">
-    <h1 class="neon">Welcome <span id="displayName"></span>!</h1>
-
-    <!-- Social buttons -->
-    <div class="buttons">
-      <button>Twitter</button>
-      <button>Instagram</button>
-      <button>YouTube</button>
-      <button>Discord</button>
-    </div>
-
-    <!-- Note Wall -->
-    <div class="note-wall">
-      <h2 class="neon" style="font-size:1.5rem;">Visitor Notes</h2>
-      <textarea id="noteInput" placeholder="Leave a note..."></textarea>
-      <button onclick="addNote()">Post Note</button>
-      <div id="notes"></div>
-    </div>
+  <div class="password-box">
+    <input type="password" id="password" placeholder="Enter Password">
+    <button onclick="checkPassword()">Unlock</button>
   </div>
 
   <script>
-    let visitorName = "";
-
-    function goToLock() {
-      visitorName = document.getElementById('username').value;
-      if(visitorName.trim() === "") visitorName = "Guest";
-      document.getElementById('front').style.display = 'none';
-      document.getElementById('lock').style.display = 'flex';
-    }
-
-    function unlock() {
-      let pass = document.getElementById('password').value;
-      if(pass === "falcon") {
-        document.getElementById('lock').style.display = 'none';
-        document.getElementById('main').style.display = 'flex';
-        document.getElementById('displayName').innerText = visitorName;
+    function checkPassword() {
+      const input = document.getElementById('password').value;
+      if (input === "falcon") {
+        alert("Access Granted! 🎱");
+        // later you can redirect to socials page
       } else {
-        document.getElementById('error').style.display = 'block';
-      }
-    }
-
-    function addNote() {
-      let noteText = document.getElementById('noteInput').value;
-      if(noteText.trim() !== "") {
-        let noteDiv = document.createElement('div');
-        noteDiv.className = "note";
-        noteDiv.innerText = visitorName + ": " + noteText;
-        document.getElementById('notes').prepend(noteDiv);
-        document.getElementById('noteInput').value = "";
+        alert("Wrong Password!");
       }
     }
   </script>
