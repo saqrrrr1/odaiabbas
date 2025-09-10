@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>odai abbas</title>
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 <style>
+  /* unchanged base except targeted header/sharpness */
   body {
     margin: 0;
     font-family: 'Press Start 2P', monospace;
@@ -18,12 +19,7 @@
   }
 
   /* Canvas for particles */
-  #bgCanvas {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    z-index: -1;
-  }
+  #bgCanvas { position: fixed; top:0; left:0; width:100%; height:100%; z-index:-1; }
 
   /* Header */
   header {
@@ -43,11 +39,15 @@
     width: 80px;
     filter: drop-shadow(0 0 6px #ff0);
   }
+  /* SHARPER / THINNER "odai abbas" - reduced glow + slight horizontal squeeze */
   header h1 {
     margin: 5px 0 0;
     font-size: 1.2rem;
     color: #ff0;
-    text-shadow: 0 0 4px #ff0;
+    text-shadow: 0 0 2px rgba(255,255,0,0.85); /* much smaller blur */
+    display: inline-block;
+    transform-origin: center;
+    transform: scaleX(0.94); /* subtle thinning */
   }
 
   /* Lock Screen */
@@ -55,29 +55,31 @@
     position: fixed;
     inset: 0;
     background: rgba(13,13,13,0.95);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
     transition: opacity 1s ease;
-    z-index: 50;
+    z-index:50;
   }
-  #lockScreen.fadeOut {
-    opacity: 0;
-    pointer-events: none;
-  }
+  #lockScreen.fadeOut { opacity:0; pointer-events:none; }
   #lockScreen img {
     width: 220px;
     max-width: 60%;
     margin-bottom: 25px;
     filter: drop-shadow(0 0 6px #ff0) drop-shadow(0 0 12px #ff0);
   }
+  /* SHARPER lock-screen title too */
   #lockScreen h1 {
     font-size: 2rem;
     margin-bottom: 20px;
     color: #ff0;
-    text-shadow: 0 0 4px #ff0, 0 0 8px #ff0;
+    text-shadow: 0 0 2px rgba(255,255,0,0.85);
+    display:inline-block;
+    transform-origin:center;
+    transform: scaleX(0.94);
   }
+
   input, button {
     font-family: 'Press Start 2P', monospace;
     font-size: 1rem;
@@ -88,11 +90,7 @@
     color: #ff0;
     border-radius: 5px;
   }
-  button:hover {
-    background: #ff0;
-    color: #0d0d0d;
-    cursor: pointer;
-  }
+  button:hover { background: #ff0; color: #0d0d0d; cursor: pointer; }
 
   /* Main Content */
   #mainContent {
@@ -102,23 +100,16 @@
     transform: translateY(40px);
     transition: opacity 1s ease, transform 1s ease;
   }
-  #mainContent.show {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  #mainContent.show { opacity:1; transform: translateY(0); }
 
-  .section {
-    margin: 40px 0;
-  }
+  .section { margin: 40px 0; }
   .buttons button {
     display: block;
     margin: 10px auto;
     width: 200px;
     transition: transform 0.2s;
   }
-  .buttons button:hover {
-    transform: scale(1.1);
-  }
+  .buttons button:hover { transform: scale(1.1); }
 
   /* Notes Wall */
   .note-wall {
@@ -127,24 +118,15 @@
     padding: 20px;
     border: 2px solid #ff0;
     max-width: 600px;
-    margin-left: auto;
-    margin-right: auto;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(255,255,0,0.2);
+    margin-left:auto; margin-right:auto;
+    border-radius:10px;
+    box-shadow: 0 0 10px rgba(255,255,0,0.18);
   }
-  .note-wall h3 {
-    color: #ff00d6;
-    text-shadow: 0 0 5px #ff00d6;
-  }
+  .note-wall h3 { color: #ff00d6; text-shadow: 0 0 5px #ff00d6; }
   .note-wall input, .note-wall textarea {
     width: calc(100% - 24px);
-    margin: 5px 0;
-    padding: 8px;
-    border-radius: 5px;
-    border: 1px solid #ff0;
-    background: #1a1a1a;
-    color: #ff0;
-    font-family: inherit;
+    margin: 5px 0; padding:8px; border-radius:5px;
+    border: 1px solid #ff0; background: #1a1a1a; color: #ff0; font-family: inherit;
   }
   #notes {
     margin-top: 20px;
@@ -158,17 +140,29 @@
     padding: 10px;
     text-align: left;
     border-radius: 6px;
-    box-shadow: 0 0 6px rgba(255,255,0,0.2);
+    box-shadow: 0 0 6px rgba(255,255,0,0.12);
     animation: popIn 0.4s ease;
+    position: relative;
   }
-  .note .author {
-    font-size: 0.7rem;
-    color: #ff00d6;
-    margin-bottom: 6px;
+  .note .author { font-size:0.7rem; color:#ff00d6; margin-bottom:6px; }
+
+  .delete-btn {
+    position: absolute;
+    top: 6px;
+    right: 8px;
+    background: #d32f2f;
+    color: #fff;
+    border: none;
+    padding: 4px 7px;
+    border-radius:4px;
+    cursor:pointer;
+    font-size:12px;
+    display:none; /* shown only in admin mode */
   }
+
   @keyframes popIn {
-    from {opacity:0; transform:scale(0.9);}
-    to {opacity:1; transform:scale(1);}
+    from {opacity:0; transform: scale(0.95);}
+    to {opacity:1; transform: scale(1);}
   }
 </style>
 </head>
@@ -198,9 +192,14 @@
   </div>
 
   <div class="section buttons">
-    <button>test</button>
-    <button>test</button>
-    <button>test</button>
+    <!-- Button 1: Facebook -->
+    <button onclick="window.open('https://www.facebook.com/odai.abbas.237239', '_blank')">Facebook</button>
+
+    <!-- Button 2: Email -->
+    <button onclick="window.location.href='mailto:odaiabbas222@gmail.com'">Email</button>
+
+    <!-- Button 3: Spicy popup -->
+    <button onclick="spicyPopup()">My spicy pictures 🌶️</button>
   </div>
 
   <div class="section note-wall">
@@ -213,62 +212,112 @@
 </div>
 
 <script>
-  /* Lock Screen */
+  /* === admin mode flag === */
+  let adminMode = false;
+
+  /* ===== Unlock (normal and admin passwords) ===== */
   function unlock() {
     const input = document.getElementById('password').value;
-    if(input === 'falcon'){
-      document.getElementById('lockScreen').classList.add('fadeOut');
-      setTimeout(()=>{
-        document.getElementById('lockScreen').style.display='none';
-        document.getElementById('mainContent').style.display='block';
-        document.getElementById('mainContent').classList.add('show');
-        document.getElementById('siteHeader').style.display='flex';
-        document.getElementById('siteHeader').style.opacity='1';
-      },1000);
+    if (input === 'falcon' || input === 'falconadmin') {
+      // set adminMode appropriately
+      adminMode = (input === 'falconadmin');
+      // fade out lock screen
+      const lock = document.getElementById('lockScreen');
+      lock.classList.add('fadeOut');
+      setTimeout(() => {
+        lock.style.display = 'none';
+        // show main and header (same behavior you had)
+        const main = document.getElementById('mainContent');
+        main.style.display = 'block';
+        main.classList.add('show');
+        const hdr = document.getElementById('siteHeader');
+        hdr.style.display = 'flex';
+        hdr.style.opacity = '1';
+        // re-render notes so delete buttons reflect adminMode
+        renderNotes();
+      }, 500);
     } else {
-      document.getElementById('error').style.display='block';
+      // small visible error and hide it shortly
+      const err = document.getElementById('error');
+      err.style.display = 'block';
+      setTimeout(()=> err.style.display='none', 1600);
     }
   }
 
-  /* Notes Wall */
+  /* ===== LocalStorage notes helpers ===== */
   function loadNotes(){
-    return JSON.parse(localStorage.getItem('odai_notes')||'[]');
+    try {
+      return JSON.parse(localStorage.getItem('odai_notes') || '[]');
+    } catch(e){ return []; }
   }
   function saveNotes(notes){
     localStorage.setItem('odai_notes', JSON.stringify(notes));
   }
+
+  /* ===== Render notes (shows delete button if adminMode) ===== */
   function renderNotes(){
-    const notesEl=document.getElementById('notes');
-    notesEl.innerHTML='';
-    loadNotes().forEach(n=>{
-      const div=document.createElement('div');
-      div.className='note';
-      div.innerHTML = `<div class="author">${n.name}</div><div>${n.text}</div>`;
-      notesEl.prepend(div);
-    });
+    const notesEl = document.getElementById('notes');
+    notesEl.innerHTML = '';
+    const notes = loadNotes();
+    // newest first
+    for (let i = notes.length - 1; i >= 0; i--){
+      const n = notes[i];
+      const div = document.createElement('div');
+      div.className = 'note';
+      const author = document.createElement('div');
+      author.className = 'author';
+      author.textContent = n.name || 'Anonymous';
+      const content = document.createElement('div');
+      content.textContent = n.text;
+      div.appendChild(author);
+      div.appendChild(content);
+
+      // delete button (only visible in admin mode)
+      const del = document.createElement('button');
+      del.className = 'delete-btn';
+      del.textContent = '❌';
+      del.title = 'Delete note';
+      del.onclick = function(e){
+        e.stopPropagation();
+        deleteNote(n.id);
+      };
+      if (adminMode) del.style.display = 'block';
+      div.appendChild(del);
+
+      notesEl.appendChild(div);
+    }
   }
+
   function addNote(){
-    const name=document.getElementById('noteName').value.trim()||'Anonymous';
-    const text=document.getElementById('noteInput').value.trim();
-    if(!text) return;
-    const notes=loadNotes();
-    notes.push({name,text});
+    const name = (document.getElementById('noteName').value || '').trim() || 'Anonymous';
+    const text = (document.getElementById('noteInput').value || '').trim();
+    if (!text) return;
+    const notes = loadNotes();
+    notes.push({ id: Date.now(), name, text });
     saveNotes(notes);
-    document.getElementById('noteName').value='';
-    document.getElementById('noteInput').value='';
+    document.getElementById('noteName').value = '';
+    document.getElementById('noteInput').value = '';
     renderNotes();
   }
-  renderNotes();
 
-  /* Interactive Background */
+  function deleteNote(id){
+    const notes = loadNotes().filter(n => n.id !== id);
+    saveNotes(notes);
+    renderNotes();
+  }
+
+  /* spicy popup */
+  function spicyPopup(){
+    alert("Do you really think I'm into that shit? Shame on you creep.");
+  }
+
+  /* ===== background particles (left unchanged) ===== */
   const canvas = document.getElementById('bgCanvas');
   const ctx = canvas.getContext('2d');
   let w = canvas.width = window.innerWidth;
   let h = canvas.height = window.innerHeight;
-  window.addEventListener('resize', () => {
-    w = canvas.width = window.innerWidth;
-    h = canvas.height = window.innerHeight;
-  });
+  window.addEventListener('resize', ()=>{ w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; });
+
   const particles = [];
   const particleCount = 120;
   for(let i=0;i<particleCount;i++){
@@ -280,36 +329,34 @@
       radius: Math.random()*2+1
     });
   }
+
   document.addEventListener('mousemove', e=>{
-    const mx = e.clientX;
-    const my = e.clientY;
+    const mx = e.clientX, my = e.clientY;
     particles.forEach(p=>{
-      let dx = p.x - mx;
-      let dy = p.y - my;
-      let dist = Math.sqrt(dx*dx + dy*dy);
-      if(dist<100){
-        p.vx += dx*0.0005;
-        p.vy += dy*0.0005;
-      }
+      const dx = p.x - mx, dy = p.y - my;
+      const dist = Math.sqrt(dx*dx + dy*dy);
+      if(dist < 100){ p.vx += dx*0.0005; p.vy += dy*0.0005; }
     });
   });
+
   function animate(){
     ctx.fillStyle = '#0d0d0d';
     ctx.fillRect(0,0,w,h);
     particles.forEach(p=>{
-      p.x += p.vx;
-      p.y += p.vy;
-      if(p.x<0||p.x>w) p.vx*=-1;
-      if(p.y<0||p.y>h) p.vy*=-1;
+      p.x += p.vx; p.y += p.vy;
+      if (p.x < 0 || p.x > w) p.vx *= -1;
+      if (p.y < 0 || p.y > h) p.vy *= -1;
       ctx.beginPath();
-      ctx.arc(p.x,p.y,p.radius,0,Math.PI*2);
+      ctx.arc(p.x, p.y, p.radius, 0, Math.PI*2);
       ctx.fillStyle = '#ff0';
       ctx.fill();
     });
     requestAnimationFrame(animate);
   }
   animate();
-</script>
 
+  /* render existing notes on load (no admin active by default) */
+  renderNotes();
+</script>
 </body>
 </html>
