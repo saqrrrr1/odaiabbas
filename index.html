@@ -57,12 +57,50 @@
     box-sizing: border-box;
   }
   #lockScreen.fadeOut { opacity:0; pointer-events:none; }
-  #lockScreen img {
+
+  .character-wrapper {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+  }
+
+  #lockCharacter {
     width: 220px;
     max-width: 60%;
     margin-bottom: 25px;
     filter: drop-shadow(0 0 6px #ff0) drop-shadow(0 0 12px #ff0);
   }
+
+  #chatBubble {
+    display: none;
+    position: absolute;
+    top: -80px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #111;
+    color: #ff0;
+    border: 2px solid #ff0;
+    border-radius: 10px;
+    padding: 10px;
+    font-size: 0.7rem;
+    width: 220px;
+    box-shadow: 0 0 10px rgba(255,255,0,0.3);
+    text-align: center;
+    animation: popIn 0.3s ease;
+    z-index: 10;
+  }
+
+  #chatBubble::after {
+    content: "";
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 10px;
+    border-style: solid;
+    border-color: #111 transparent transparent transparent;
+  }
+
   #lockScreen h1 {
     font-size: 2rem;
     margin-bottom: 20px;
@@ -183,7 +221,10 @@
 </header>
 
 <div id="lockScreen">
-  <img src="https://i.postimg.cc/QCx85ZGh/Whats-App-Image-2025-09-10-at-06-25-15-dd017815-removebg-preview.png" alt="Odai Abbas Logo">
+  <div class="character-wrapper" onclick="characterTalk()">
+    <img id="lockCharacter" src="https://i.postimg.cc/QCx85ZGh/Whats-App-Image-2025-09-10-at-06-25-15-dd017815-removebg-preview.png" alt="Odai Abbas Logo">
+    <div id="chatBubble"></div>
+  </div>
   <h1>odai abbas</h1>
   <div class="lock-inputs">
     <input type="password" id="password" placeholder="Enter Key">
@@ -260,8 +301,29 @@
   }
 
   window.showHint = function() {
-    alert("Password hint: [placeholder hint text here]");
+    alert("Password hint: It's a bird.");
   }
+
+  // Character chat cycle
+  let chatIndex = 0;
+  const chatMessages = [
+    "It’s the fastest bird on Earth. If you’re really that clueless, click me again.",
+    "It starts with an ‘F’. I swear you better get it this time and not click me again.",
+    "It’s falcon, you moron. Honestly, you’re pathetic."
+  ];
+
+  window.characterTalk = function() {
+    const bubble = document.getElementById("chatBubble");
+
+    if (chatIndex < chatMessages.length) {
+      bubble.textContent = chatMessages[chatIndex];
+      bubble.style.display = "block";
+      chatIndex++;
+    } else {
+      bubble.style.display = "none";
+      chatIndex = 0;
+    }
+  };
 
   // Render notes
   async function renderNotes(){
