@@ -89,14 +89,6 @@
     <button onclick="checkPassword()">Unlock</button>
   </div>
 
-  <!-- Note Wall Section -->
-  <div class="note-wall">
-    <h2>Visitor Notes</h2>
-    <textarea id="noteInput" placeholder="Leave a note..."></textarea>
-    <button onclick="addNote()">Post Note</button>
-    <div id="notes"></div>
-  </div>
-
   <script>
     function checkPassword() {
       const input = document.getElementById('password').value;
@@ -105,17 +97,6 @@
         // Redirect to main content or unlock additional features
       } else {
         alert('Wrong Password!');
-      }
-    }
-
-    function addNote() {
-      const noteText = document.getElementById('noteInput').value;
-      if (noteText.trim() !== '') {
-        const noteDiv = document.createElement('div');
-        noteDiv.className = 'note';
-        noteDiv.textContent = noteText;
-        document.getElementById('notes').prepend(noteDiv);
-        document.getElementById('noteInput').value = '';
       }
     }
   </script>
