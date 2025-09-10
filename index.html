@@ -19,7 +19,6 @@
 
   #bgCanvas { position: fixed; top:0; left:0; width:100%; height:100%; z-index:-1; }
 
-  /* Header now scrolls with content (no more fixed) */
   header {
     display: none;
     margin-top: 10px;
@@ -28,7 +27,7 @@
     z-index: 100;
     opacity: 0;
     transition: opacity 1s ease;
-    position: relative; /* not fixed anymore */
+    position: relative;
   }
   header img {
     width: 80px;
@@ -54,6 +53,8 @@
     align-items:center;
     transition: opacity 1s ease;
     z-index:50;
+    padding: 0 10px; /* ensures mobile screens don’t overflow */
+    box-sizing: border-box;
   }
   #lockScreen.fadeOut { opacity:0; pointer-events:none; }
   #lockScreen img {
@@ -76,6 +77,8 @@
     display: flex;
     align-items: center;
     gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
   }
 
   input, button {
@@ -127,6 +130,10 @@
     margin: 5px 0; padding:8px; border-radius:5px;
     border: 1px solid #ff0; background: #1a1a1a; color: #ff0; font-family: inherit;
   }
+  .note-wall textarea {
+    resize: none; /* prevents user from resizing */
+  }
+
   #notes {
     margin-top: 20px;
     display: grid;
