@@ -74,12 +74,22 @@
   }
 
   .lock-inputs {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    flex-wrap: wrap;
-    justify-content: center;
-  }
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  max-width: 300px; /* optional limit for mobile */
+  justify-content: flex-start;
+}
+
+.lock-inputs input {
+  flex: 1; /* input takes remaining space */
+  min-width: 0; /* prevents overflow */
+}
+
+.lock-inputs button {
+  flex: 0 0 auto; /* button stays fixed size */
+}
 
   input, button {
     font-family: 'Press Start 2P', monospace;
