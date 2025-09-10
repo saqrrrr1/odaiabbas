@@ -53,7 +53,7 @@
     align-items:center;
     transition: opacity 1s ease;
     z-index:50;
-    padding: 0 10px; /* ensures mobile screens don’t overflow */
+    padding: 0 10px;
     box-sizing: border-box;
   }
   #lockScreen.fadeOut { opacity:0; pointer-events:none; }
@@ -74,22 +74,15 @@
   }
 
   .lock-inputs {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  width: 100%;
-  max-width: 300px; /* optional limit for mobile */
-  justify-content: flex-start;
-}
-
-.lock-inputs input {
-  flex: 1; /* input takes remaining space */
-  min-width: 0; /* prevents overflow */
-}
-
-.lock-inputs button {
-  flex: 0 0 auto; /* button stays fixed size */
-}
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    max-width: 300px;
+    justify-content: flex-start;
+  }
+  .lock-inputs input { flex: 1; min-width: 0; }
+  .lock-inputs button { flex: 0 0 auto; }
 
   input, button {
     font-family: 'Press Start 2P', monospace;
@@ -133,16 +126,14 @@
   }
   .note-wall h3 { 
     color: #ff00d6; 
-    text-shadow: 0 0 1px #ff00d6; /* way less glow */
+    text-shadow: 0 0 1px #ff00d6;
   }
   .note-wall input, .note-wall textarea {
     width: calc(100% - 24px);
     margin: 5px 0; padding:8px; border-radius:5px;
     border: 1px solid #ff0; background: #1a1a1a; color: #ff0; font-family: inherit;
   }
-  .note-wall textarea {
-    resize: none; /* prevents user from resizing */
-  }
+  .note-wall textarea { resize: none; }
 
   #notes {
     margin-top: 20px;
@@ -222,13 +213,33 @@
   </div>
 </div>
 
-<script>
-  let adminMode = false;
+<!-- Firebase + Notes Script -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, serverTimestamp, query, orderBy } 
+    from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-  function unlock() {
+  // Firebase config
+  const firebaseConfig = {
+    apiKey: "AIzaSyDip2CWg_j9HvkSGYCWDJE1CafEVXk_9Mk",
+    authDomain: "odai-c92c9.firebaseapp.com",
+    projectId: "odai-c92c9",
+    storageBucket: "odai-c92c9.firebasestorage.app",
+    messagingSenderId: "473727877597",
+    appId: "1:473727877597:web:03b0db9b97d5150cd5f634",
+    measurementId: "G-VMF44R9M7R"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  window.adminMode = false;
+
+  // Unlock screen
+  window.unlock = function() {
     const input = document.getElementById('password').value;
     if (input === 'falcon' || input === 'falconadmin') {
-      adminMode = (input === 'falconadmin');
+      window.adminMode = (input === 'falconadmin');
       const lock = document.getElementById('lockScreen');
       lock.classList.add('fadeOut');
       setTimeout(() => {
@@ -248,69 +259,71 @@
     }
   }
 
-  function showHint(){
+  window.showHint = function() {
     alert("Password hint: [placeholder hint text here]");
   }
 
-  function loadNotes(){
-    try { return JSON.parse(localStorage.getItem('odai_notes') || '[]'); }
-    catch(e){ return []; }
-  }
-  function saveNotes(notes){ localStorage.setItem('odai_notes', JSON.stringify(notes)); }
-
-  function renderNotes(){
+  // Render notes
+  async function renderNotes(){
     const notesEl = document.getElementById('notes');
     notesEl.innerHTML = '';
-    const notes = loadNotes();
-    for (let i = notes.length - 1; i >= 0; i--){
-      const n = notes[i];
+
+    const q = query(collection(db, "notes"), orderBy("timestamp", "desc"));
+    const snapshot = await getDocs(q);
+
+    snapshot.forEach(docSnap => {
+      const n = docSnap.data();
       const div = document.createElement('div');
       div.className = 'note';
+
       const author = document.createElement('div');
       author.className = 'author';
-      author.textContent = n.name || 'Anonymous';
+      author.textContent = n.name || "Anonymous";
+
       const content = document.createElement('div');
       content.textContent = n.text;
+
       div.appendChild(author);
       div.appendChild(content);
 
-      const del = document.createElement('button');
-      del.className = 'delete-btn';
-      del.textContent = '❌';
-      del.title = 'Delete note';
-      del.onclick = function(e){
-        e.stopPropagation();
-        deleteNote(n.id);
-      };
-      if (adminMode) del.style.display = 'block';
-      div.appendChild(del);
+      if (window.adminMode) {
+        const del = document.createElement('button');
+        del.className = 'delete-btn';
+        del.textContent = '❌';
+        del.onclick = async () => {
+          await deleteDoc(doc(db, "notes", docSnap.id));
+          renderNotes();
+        };
+        del.style.display = 'block';
+        div.appendChild(del);
+      }
 
       notesEl.appendChild(div);
-    }
+    });
   }
 
-  function addNote(){
+  // Add new note
+  window.addNote = async function(){
     const name = (document.getElementById('noteName').value || '').trim() || 'Anonymous';
     const text = (document.getElementById('noteInput').value || '').trim();
     if (!text) return;
-    const notes = loadNotes();
-    notes.push({ id: Date.now(), name, text });
-    saveNotes(notes);
+
+    await addDoc(collection(db, "notes"), {
+      name,
+      text,
+      timestamp: serverTimestamp()
+    });
+
     document.getElementById('noteName').value = '';
     document.getElementById('noteInput').value = '';
     renderNotes();
   }
 
-  function deleteNote(id){
-    const notes = loadNotes().filter(n => n.id !== id);
-    saveNotes(notes);
-    renderNotes();
-  }
-
-  function spicyPopup(){
+  window.spicyPopup = function(){
     alert("Do you really think I'm into that shit? Shame on you creep.");
   }
 
+  // Background particles
   const canvas = document.getElementById('bgCanvas');
   const ctx = canvas.getContext('2d');
   let w = canvas.width = window.innerWidth;
@@ -353,8 +366,7 @@
     requestAnimationFrame(animate);
   }
   animate();
-
-  renderNotes();
 </script>
+
 </body>
 </html>
