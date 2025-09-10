@@ -37,6 +37,12 @@
     align-items: center;
   }
 
+  #lockScreen img {
+    width: 150px;
+    margin-bottom: 20px;
+    filter: drop-shadow(0 0 10px #0ff) drop-shadow(0 0 20px #0ff);
+  }
+
   #lockScreen h1 {
     font-size: 3rem;
     margin-bottom: 20px;
@@ -113,6 +119,7 @@
 
 <!-- Lock Screen -->
 <div id="lockScreen">
+  <img src="https://i.postimg.cc/SsF5Q4qZ/20250910-0344-Neon-Pixelated-Falcon-simple-compose-01k4rh7mdsf91bqbmrj61n6z5b-removebg-preview.png" alt="Odai Abbas Logo">
   <h1>Odai Abbas</h1>
   <input type="password" id="password" placeholder="Enter Password">
   <button onclick="unlock()">Unlock</button>
