@@ -209,6 +209,13 @@
     from {opacity:0; transform: scale(0.95);}
     to {opacity:1; transform: scale(1);}
   }
+
+  #hintBtn {
+  min-width: 80px;
+  font-size: 0.9rem;
+  padding: 12px 16px;
+  letter-spacing: 1px;
+}
 </style>
 </head>
 <body>
@@ -227,9 +234,9 @@
   </div>
   <h1>odai abbas</h1>
   <div class="lock-inputs">
-    <input type="password" id="password" placeholder="Enter Key">
-    <button onclick="showHint()">❔</button>
-  </div>
+  <input type="password" id="password" placeholder="Enter Key">
+  <button id="hintBtn" onclick="showHint()">HINT</button>
+</div>
   <button onclick="unlock()">Unlock</button>
   <p id="error" style="color:red; display:none;">Wrong password!</p>
 </div>
