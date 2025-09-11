@@ -116,7 +116,7 @@
     align-items: center;
     gap: 10px;
     width: 100%;
-    max-width: 300px; /* reasonable width */
+    max-width: 300px; 
     justify-content: flex-start;
     box-sizing: border-box;
   }
@@ -130,17 +130,17 @@
     border: 2px solid #ff0;
     background: #111;
     color: #ff0;
-    margin: 0; /* remove extra margin */
+    margin: 0; 
     box-sizing: border-box;
   }
 
   .lock-inputs button {
     flex: 0 0 auto;
-    padding: 12px 16px; /* enough for "HINT" text */
+    padding: 12px 16px; 
     font-size: 0.95rem;
     min-width: 90px;
     border-radius: 5px;
-    margin: 0; /* remove extra margin */
+    margin: 0; 
     cursor: pointer;
     background: #111;
     color: #ff0;
@@ -220,6 +220,20 @@
   }
   .note .author { font-size:0.7rem; color:#ff00d6; margin-bottom:6px; }
 
+  /* Special Falcon note */
+  .special-note {
+    background: linear-gradient(135deg, #222, #111);
+    border-color: #ff0;
+    box-shadow: 0 0 8px #ff0, 0 0 15px #ff00d6, 0 0 20px #ff0 inset;
+    animation: pulseGlow 2s infinite alternate;
+  }
+
+  @keyframes pulseGlow {
+    0% { box-shadow: 0 0 6px #ff0, 0 0 10px #ff00d6; }
+    50% { box-shadow: 0 0 12px #ff0, 0 0 20px #ff00d6; }
+    100% { box-shadow: 0 0 6px #ff0, 0 0 10px #ff00d6; }
+  }
+
   .delete-btn {
     position: absolute;
     top: 6px;
@@ -284,7 +298,6 @@
   </div>
 </div>
 
-<!-- Firebase + Notes Script -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
   import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, serverTimestamp, query, orderBy } 
@@ -328,9 +341,7 @@
     }
   }
 
-  window.showHint = function() {
-    alert("It's on my shirt.");
-  }
+  window.showHint = function() { alert("It's on my shirt."); }
 
   let chatIndex = 0;
   const chatMessages = [
@@ -341,7 +352,6 @@
 
   window.characterTalk = function() {
     const bubble = document.getElementById("chatBubble");
-
     if (chatIndex < chatMessages.length) {
       bubble.textContent = chatMessages[chatIndex];
       bubble.style.display = "block";
@@ -370,6 +380,11 @@
 
       const content = document.createElement('div');
       content.textContent = n.text;
+
+      // Add special class for your Falcon note
+      if(n.text.includes("the one and only Falcon 🦅")) {
+        div.classList.add('special-note');
+      }
 
       div.appendChild(author);
       div.appendChild(content);
@@ -410,6 +425,7 @@
     alert("Do you really think I'm into that shit? Shame on you creep.");
   }
 
+  // Background particles
   const canvas = document.getElementById('bgCanvas');
   const ctx = canvas.getContext('2d');
   let w = canvas.width = window.innerWidth;
