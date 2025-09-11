@@ -116,11 +116,39 @@
     align-items: center;
     gap: 10px;
     width: 100%;
-    max-width: 300px;
+    max-width: 300px; /* reasonable width */
     justify-content: flex-start;
+    box-sizing: border-box;
   }
-  .lock-inputs input { flex: 1; min-width: 0; }
-  .lock-inputs button { flex: 0 0 auto; }
+
+  .lock-inputs input {
+    flex: 1;
+    min-width: 0;
+    padding: 12px 14px; 
+    font-size: 1rem;
+    border-radius: 5px;
+    border: 2px solid #ff0;
+    background: #111;
+    color: #ff0;
+    margin: 0; /* remove extra margin */
+    box-sizing: border-box;
+  }
+
+  .lock-inputs button {
+    flex: 0 0 auto;
+    padding: 12px 16px; /* enough for "HINT" text */
+    font-size: 0.95rem;
+    min-width: 90px;
+    border-radius: 5px;
+    margin: 0; /* remove extra margin */
+    cursor: pointer;
+    background: #111;
+    color: #ff0;
+    border: 2px solid #ff0;
+    font-family: 'Press Start 2P', monospace;
+  }
+
+  .lock-inputs button:hover { background: #ff0; color: #0d0d0d; }
 
   input, button {
     font-family: 'Press Start 2P', monospace;
@@ -132,6 +160,7 @@
     color: #ff0;
     border-radius: 5px;
   }
+
   button:hover { background: #ff0; color: #0d0d0d; cursor: pointer; }
 
   #mainContent {
@@ -210,12 +239,6 @@
     to {opacity:1; transform: scale(1);}
   }
 
-  #hintBtn {
-  min-width: 80px;
-  font-size: 0.9rem;
-  padding: 12px 16px;
-  letter-spacing: 1px;
-}
 </style>
 </head>
 <body>
@@ -234,9 +257,9 @@
   </div>
   <h1>odai abbas</h1>
   <div class="lock-inputs">
-  <input type="password" id="password" placeholder="Enter Key">
-  <button id="hintBtn" onclick="showHint()">HINT</button>
-</div>
+    <input type="password" id="password" placeholder="Enter Key">
+    <button onclick="showHint()">HINT</button>
+  </div>
   <button onclick="unlock()">Unlock</button>
   <p id="error" style="color:red; display:none;">Wrong password!</p>
 </div>
@@ -267,7 +290,6 @@
   import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, serverTimestamp, query, orderBy } 
     from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-  // Firebase config
   const firebaseConfig = {
     apiKey: "AIzaSyDip2CWg_j9HvkSGYCWDJE1CafEVXk_9Mk",
     authDomain: "odai-c92c9.firebaseapp.com",
@@ -283,7 +305,6 @@
 
   window.adminMode = false;
 
-  // Unlock screen
   window.unlock = function() {
     const input = document.getElementById('password').value;
     if (input === 'falcon' || input === 'falconadmin') {
@@ -311,7 +332,6 @@
     alert("It's on my shirt.");
   }
 
-  // Character chat cycle
   let chatIndex = 0;
   const chatMessages = [
     "It’s the fastest bird on Earth. If you’re really that clueless, click me again.",
@@ -332,7 +352,6 @@
     }
   };
 
-  // Render notes
   async function renderNotes(){
     const notesEl = document.getElementById('notes');
     notesEl.innerHTML = '';
@@ -371,7 +390,6 @@
     });
   }
 
-  // Add new note
   window.addNote = async function(){
     const name = (document.getElementById('noteName').value || '').trim() || 'Anonymous';
     const text = (document.getElementById('noteInput').value || '').trim();
@@ -392,7 +410,6 @@
     alert("Do you really think I'm into that shit? Shame on you creep.");
   }
 
-  // Background particles
   const canvas = document.getElementById('bgCanvas');
   const ctx = canvas.getContext('2d');
   let w = canvas.width = window.innerWidth;
